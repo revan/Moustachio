@@ -8,7 +8,7 @@ from PIL import Image, ImageStat
 from face_client.face_client import FaceClient
 
 from secrets import API_KEY, API_SECRET
-MOUSTACHE_PATH = "moustache.png"
+MOUSTACHE_PATH = "transforms/moustache.png"
 
 def process_image(image_url, moustache, response):
     pprint(response)
@@ -27,8 +27,7 @@ def process_image(image_url, moustache, response):
     mouth = response['mouth_center']
     nose = response['nose']
 
-    confidence = (mouth['confidence'] + nose['confidence']) / 2
-    if confidence < 50:
+    if mouth['confidence'] < 40 and nose['confidence'] < 40:
         print 'Not sure.'
         return
 
@@ -42,12 +41,10 @@ def process_image(image_url, moustache, response):
 
     face = Image.open(cStringIO.StringIO(urllib.urlopen(image_url).read()))
 
-    #pos = (int(0.01 * (face_x * face_width - moustache.size[0]/2) + nose['x']), int(nose['y'] - noseToMouth / 2))
     pos = (int(nose['x'] * image_width * 0.01 - moustache.size[0]/2), int(nose['y'] * image_height * 0.01 ))
 
     print pos
     paste_on(face, moustache, pos)
-    face.show() 
     face.save('out.png')
 
 def scale_moustache(moustache, height):
@@ -69,5 +66,4 @@ if __name__ == '__main__':
         response = client.faces_detect(image_url)
         moustache = Image.open(MOUSTACHE_PATH)
         
-        #TODO: multiple images at once
         process_image(image_url, moustache, response)
