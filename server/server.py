@@ -12,9 +12,9 @@ def root():
 @app.route("/<path:url>")
 def stache(url):
     print url
-    subprocess.call(['rm', 'out.png'])
+    subprocess.call(['rm', '/tmp/out.png'])
     subprocess.call(['python2', 'transforms/moustachio.py', url])
-    return send_file('out.png')
+    return send_file('/tmp/out.png')
 
 if __name__ == '__main__':
     app.run()
