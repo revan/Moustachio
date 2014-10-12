@@ -16,7 +16,7 @@ def process_image(image_url, moustache, response):
     face = Image.open(cStringIO.StringIO(urllib.urlopen(image_url).read()))
 
     # quit if no faces detected
-    if len(response['photos']) == 0:
+    if len(response['photos']) == 0 or len(response['photos'][0]['tags']) == 0:
         print 'No faces.'
         return face
 
